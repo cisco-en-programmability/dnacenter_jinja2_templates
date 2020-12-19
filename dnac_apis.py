@@ -405,6 +405,3 @@ def check_task_id_status(task_id, dnac_jwt_token):
         task_status = task_json['response']
         if 'endTime' in task_status.keys():
             return task_status
-
-
-
