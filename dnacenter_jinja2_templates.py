@@ -27,22 +27,16 @@ __version__ = "0.1.0"
 __copyright__ = "Copyright (c) 2020 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
 
-
-import requests
-import json
-import urllib3
-import time
-import sys
-import os
-import logging
 import datetime
-import dnac_apis
+import time
 
-from urllib3.exceptions import InsecureRequestWarning  # for insecure https warnings
+import urllib3
 from requests.auth import HTTPBasicAuth  # for Basic Auth
+from urllib3.exceptions import InsecureRequestWarning  # for insecure https warnings
 
-from config import DNAC_URL, DNAC_PASS, DNAC_USER
-from config import PROJECT_J2, MANAGEMENT_INT_TEMPL_J2, NTP_SERVER_J2, DEVICE_NAME, PARAMS
+import dnac_apis
+from config import DNAC_PASS, DNAC_USER
+from config import PROJECT_J2, MANAGEMENT_INT_J2, DEVICE_NAME, PARAMS
 
 urllib3.disable_warnings(InsecureRequestWarning)  # disable insecure https warnings
 
@@ -80,7 +74,7 @@ def main():
         return
 
     # continue with the project id
-    print('\nThe project id for the the project with the name "' + PROJECT_J2 + '" is: ' + project_id)
+    print('The project "' + PROJECT_J2 + '" id is: ' + project_id)
 
     input('\nEnter any key to continue ')
 
@@ -88,9 +82,9 @@ def main():
     # create new template and commit if not existing
     # update the existing template and commit if existing
 
-    cli_config_name = MANAGEMENT_INT_TEMPL_J2.split('.')[0]  # select the template name from the template file
+    template_name = MANAGEMENT_INT_J2.split('.')[0]  # select the template name from the template file
 
-    cli_file = open(MANAGEMENT_INT_TEMPL_J2, 'r')  # open file with the template
+    cli_file = open(MANAGEMENT_INT_J2, 'r')  # open file with the template
     cli_config_commands = cli_file.read()  # read the file
 
     template_param = [
@@ -108,13 +102,35 @@ def main():
         }
     ]
 
-    # upload and commit the template
-    dnac_apis.upload_template(cli_config_name, PROJECT_J2, cli_config_commands, template_param, dnac_auth)
+    # verify if existing template in the project
+    template_id = dnac_apis.get_template_id(template_name, PROJECT_J2, dnac_auth)
 
-    input('\nTemplate created, Enter any key to continue \n')
+    if template_id == '':
+        print('\nThe template with the name "' + template_name + '" not found, create and commit the template')
+        template_id = dnac_apis.create_commit_template(template_name, PROJECT_J2, cli_config_commands, template_param,
+                                              dnac_auth)
+
+    else:
+        print('\nThe template with the name "' + template_name + '" found, update and commit template')
+        dnac_apis.update_commit_template(template_name, PROJECT_J2, cli_config_commands,
+                                                       template_param, dnac_auth)
+
+    print('The template "' + template_name + '" id is: ', template_id)
+    input('\nEnter any key to continue \n')
 
     # deploy the template
-    dnac_apis.send_deploy_template(MANAGEMENT_INT_TEMPL_J2, PROJECT_J2, DEVICE_NAME, PARAMS, dnac_auth)
+    deployment_id = dnac_apis.send_deploy_template(template_name, PROJECT_J2, DEVICE_NAME, PARAMS, dnac_auth)
+
+    print('\nTemplate "' + template_name + '" started, task id: "' + deployment_id)
+    time.sleep(10)
+
+    deployment_status = dnac_apis.check_template_deployment_status(deployment_id, dnac_auth)
+    print('Deployment task result :', deployment_status)
+
+    # optional, delete the project and template
+    input('\nEnter any key to delete the template and project \n')
+    dnac_apis.delete_template(template_name, PROJECT_J2, dnac_auth)
+    dnac_apis.delete_project(PROJECT_J2, dnac_auth)
 
     date_time = str(datetime.datetime.now().replace(microsecond=0))
     print('\n\nEnd of Application "dnacenter_jinja2_templates.py" Run: ' + date_time)
