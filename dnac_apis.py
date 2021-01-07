@@ -403,16 +403,25 @@ def send_deploy_template_no_params(template_name, project_name, device_name, dna
 def check_template_deployment_status(depl_task_id, dnac_jwt_token):
     """
     This function will check the result for the deployment of the CLI template with the id {depl_task_id}
+    Loop until the deployment task is completed
     :param depl_task_id: template deployment id
     :param dnac_jwt_token: Cisco DNA Center token
     :return: status - {SUCCESS} or {FAILURE}
     """
-    url = DNAC_URL + '/dna/intent/api/v1/template-programmer/template/deploy/status/' + depl_task_id
-    header = {'content-type': 'application/json', 'x-auth-token': dnac_jwt_token}
-    response = requests.get(url, headers=header, verify=False)
-    response_json = response.json()
-    deployment_status = response_json["status"]
-    return deployment_status
+    # loop until the task is completed, check status every second
+    deployment_status = ''
+    while deployment_status == '':
+        time.sleep(5)
+        try:
+            url = DNAC_URL + '/dna/intent/api/v1/template-programmer/template/deploy/status/' + depl_task_id
+            header = {'content-type': 'application/json', 'x-auth-token': dnac_jwt_token}
+            deployment_response = requests.get(url, headers=header, verify=False)
+            deployment_response_json = deployment_response.json()
+            if deployment_response_json['endTime'] is not '':
+                deployment_status = deployment_response_json['status']
+                return deployment_status
+        except:
+            pass
 
 
 def check_task_id_status(task_id, dnac_jwt_token):

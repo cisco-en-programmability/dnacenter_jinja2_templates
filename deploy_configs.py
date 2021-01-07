@@ -96,7 +96,7 @@ def main():
         deployment_id = dnac_apis.send_deploy_template_no_params(DEPLOY_TEMPLATE, DEPLOY_PROJECT, switch, dnac_auth)
     
         print('\nTemplate "' + DEPLOY_TEMPLATE + '" started, task id: "' + deployment_id + '"')
-        time.sleep(30)
+        time.sleep(1)  # wait for the deployment task to be created
     
         deployment_status = dnac_apis.check_template_deployment_status(deployment_id, dnac_auth)
         print('Deployment task result for switch: ', switch, ' is: ', deployment_status)
