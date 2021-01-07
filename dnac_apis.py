@@ -363,7 +363,6 @@ def send_deploy_template(template_name, project_name, device_name, parameters, d
                 }
             ]
         }
-    print(payload)
     url = DNAC_URL + '/dna/intent/api/v1/template-programmer/template/deploy'
     header = {'content-type': 'application/json', 'x-auth-token': dnac_jwt_token}
     deployment = requests.post(url, headers=header, data=json.dumps(payload), verify=False)
@@ -393,7 +392,6 @@ def send_deploy_template_no_params(template_name, project_name, device_name, dna
                 }
             ]
         }
-    print(payload)
     url = DNAC_URL + '/dna/intent/api/v1/template-programmer/template/deploy'
     header = {'content-type': 'application/json', 'x-auth-token': dnac_jwt_token}
     deployment = requests.post(url, headers=header, data=json.dumps(payload), verify=False)

@@ -75,18 +75,23 @@ def main():
     device_list = dnac_apis.get_all_device_list(500, dnac_auth)
 
     # create the switches list
-    switch_list = []
+    switch_list_reachable = []
+    switch_list_unreachable = []
 
     # identify all devices that match the device type
     for device in device_list:
         device_type = device['type']
         if device_type in DEVICE_TYPES:
             hostname = device['hostname']
-            switch_list.append(hostname)
+            if device['reachabilityStatus'] == 'Reachable':
+                switch_list_reachable.append(hostname)
+            else:
+                switch_list_unreachable.append(hostname)
 
-    print('\nThe devices to which the template will be deployed is:', switch_list)
+    print('\nThe devices to which the template will be deployed is:', switch_list_reachable)
+    print('\nThe unreachable devices to which the template will not be deployed is:', switch_list_unreachable, '\n')
 
-    for switch in switch_list:
+    for switch in switch_list_reachable:
         # deploy the template
         deployment_id = dnac_apis.send_deploy_template_no_params(DEPLOY_TEMPLATE, DEPLOY_PROJECT, switch, dnac_auth)
     
