@@ -88,8 +88,8 @@ def main():
             else:
                 switch_list_unreachable.append(hostname)
 
-    print('\nThe devices to which the template will be deployed is:', switch_list_reachable)
-    print('\nThe unreachable devices to which the template will not be deployed is:', switch_list_unreachable, '\n')
+    print('\nThe devices to which the template will be deployed are:', switch_list_reachable)
+    print('\nThe unreachable devices to which the template will not be deployed are:', switch_list_unreachable, '\n')
 
     for switch in switch_list_reachable:
         # deploy the template
