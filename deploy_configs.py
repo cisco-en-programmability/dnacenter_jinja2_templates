@@ -99,6 +99,10 @@ def main():
 
     for switch in switch_list_reachable:
         # deploy the template
+
+        # get a Cisco DNA Center auth token, required for mass device configs, script running will take longer than
+        # 60 min.
+        dnac_auth = dnac_apis.get_dnac_jwt_token(DNAC_AUTH)
         deployment_id = dnac_apis.send_deploy_template_no_params(DEPLOY_TEMPLATE, DEPLOY_PROJECT, switch, dnac_auth)
     
         print('\nTemplate "' + DEPLOY_TEMPLATE + '" started, task id: "' + deployment_id + '"')
