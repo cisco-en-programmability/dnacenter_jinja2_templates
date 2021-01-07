@@ -408,10 +408,13 @@ def check_template_deployment_status(depl_task_id, dnac_jwt_token):
     :param dnac_jwt_token: Cisco DNA Center token
     :return: status - {SUCCESS} or {FAILURE}
     """
-    # loop until the task is completed, check status every second
-    deployment_status = ''
-    while deployment_status == '':
+    # loop until the task is completed, check status every 5 seconds
+    deployment_status = 'unknown'
+    count = 0
+    while deployment_status == 'unknown':
         time.sleep(5)
+        count += 1
+        print(count)
         try:
             url = DNAC_URL + '/dna/intent/api/v1/template-programmer/template/deploy/status/' + depl_task_id
             header = {'content-type': 'application/json', 'x-auth-token': dnac_jwt_token}
@@ -422,6 +425,8 @@ def check_template_deployment_status(depl_task_id, dnac_jwt_token):
                 return deployment_status
         except:
             pass
+        if count >= 24:
+            return deployment_status
 
 
 def check_task_id_status(task_id, dnac_jwt_token):
