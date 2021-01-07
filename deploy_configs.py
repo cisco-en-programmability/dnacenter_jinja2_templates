@@ -96,6 +96,11 @@ def main():
         deployment_status = dnac_apis.check_template_deployment_status(deployment_id, dnac_auth)
         print('Deployment task result for switch: ', switch, ' is: ', deployment_status)
 
+        # optional for manual deployment to test
+        value = input('Input y/n to continue ')
+        if value == 'n':
+            break
+
     date_time = str(datetime.datetime.now().replace(microsecond=0))
     print('\n\nEnd of Application "deploy_configs.py" Run: ' + date_time)
     return
