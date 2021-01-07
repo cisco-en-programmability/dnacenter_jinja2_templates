@@ -95,16 +95,16 @@ def main():
         # deploy the template
         deployment_id = dnac_apis.send_deploy_template_no_params(DEPLOY_TEMPLATE, DEPLOY_PROJECT, switch, dnac_auth)
     
-        print('\nTemplate "' + DEPLOY_TEMPLATE + '" started, task id: "' + deployment_id)
-        time.sleep(10)
+        print('\nTemplate "' + DEPLOY_TEMPLATE + '" started, task id: "' + deployment_id + '"')
+        time.sleep(30)
     
         deployment_status = dnac_apis.check_template_deployment_status(deployment_id, dnac_auth)
         print('Deployment task result for switch: ', switch, ' is: ', deployment_status)
 
         # optional for manual deployment to test
-        value = input('Input y/n to continue ')
-        if value == 'n':
-            break
+        # value = input('Input y/n to continue ')
+        # if value == 'n':
+        #    break
 
     date_time = str(datetime.datetime.now().replace(microsecond=0))
     print('\n\nEnd of Application "deploy_configs.py" Run: ' + date_time)
