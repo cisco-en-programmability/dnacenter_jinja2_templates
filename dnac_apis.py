@@ -414,7 +414,6 @@ def check_template_deployment_status(depl_task_id, dnac_jwt_token):
     while deployment_status == 'unknown':
         time.sleep(5)
         count += 1
-        print(count)
         try:
             url = DNAC_URL + '/dna/intent/api/v1/template-programmer/template/deploy/status/' + depl_task_id
             header = {'content-type': 'application/json', 'x-auth-token': dnac_jwt_token}
