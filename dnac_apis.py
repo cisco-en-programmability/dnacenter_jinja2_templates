@@ -363,6 +363,37 @@ def send_deploy_template(template_name, project_name, device_name, parameters, d
                 }
             ]
         }
+    print(payload)
+    url = DNAC_URL + '/dna/intent/api/v1/template-programmer/template/deploy'
+    header = {'content-type': 'application/json', 'x-auth-token': dnac_jwt_token}
+    deployment = requests.post(url, headers=header, data=json.dumps(payload), verify=False)
+    deployment_json = deployment.json()
+    depl_task_id = deployment_json["deploymentId"].split(' ')[-1]
+    return depl_task_id
+
+
+def send_deploy_template_no_params(template_name, project_name, device_name, dnac_jwt_token):
+    """
+    This function will deploy the template with the name {template_name} to the network device with the name
+    {device_name}
+    :param template_name: template name
+    :param project_name: project name
+    :param device_name: device hostname
+    :param dnac_jwt_token: Cisco DNA Center token
+    :return: the deployment task id
+    """
+    template_id = get_template_id(template_name, project_name, dnac_jwt_token)
+    payload = {
+            "templateId": template_id,
+            "forcePushTemplate": True,
+            "targetInfo": [
+                {
+                    "id": device_name,
+                    "type": "MANAGED_DEVICE_HOSTNAME"
+                }
+            ]
+        }
+    print(payload)
     url = DNAC_URL + '/dna/intent/api/v1/template-programmer/template/deploy'
     header = {'content-type': 'application/json', 'x-auth-token': dnac_jwt_token}
     deployment = requests.post(url, headers=header, data=json.dumps(payload), verify=False)
@@ -405,3 +436,25 @@ def check_task_id_status(task_id, dnac_jwt_token):
         task_status = task_json['response']
         if 'endTime' in task_status.keys():
             return task_status
+
+
+def get_all_device_list(limit, dnac_jwt_token):
+    """
+    The function will return all network devices info, using the specified limit of devices/API Call
+    :param limit: the number of devices to return per API call
+    :param dnac_jwt_token: Cisco DNA C token
+    :return: DNA C device inventory info
+    """
+    offset = 1
+    all_devices_list = []
+    all_devices_info = ['']  # assign a value, to make sure the API call will run at least once
+    while all_devices_info:
+        all_devices_info = ''
+        url = DNAC_URL + '/dna/intent/api/v1/network-device?offset=' + str(offset) + '&limit=' + str(limit)
+        header = {'content-type': 'application/json', 'x-auth-token': dnac_jwt_token}
+        all_devices_response = requests.get(url, headers=header, verify=False)
+        all_devices_json = all_devices_response.json()
+        all_devices_info = all_devices_json['response']
+        all_devices_list += all_devices_info
+        offset += limit
+    return all_devices_list
