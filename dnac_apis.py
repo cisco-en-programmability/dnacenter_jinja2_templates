@@ -417,7 +417,7 @@ def check_template_deployment_status(depl_task_id, dnac_jwt_token):
             header = {'content-type': 'application/json', 'x-auth-token': dnac_jwt_token}
             deployment_response = requests.get(url, headers=header, verify=False)
             deployment_response_json = deployment_response.json()
-            if deployment_response_json['endTime'] is not '':
+            if deployment_response_json['endTime'] != '':
                 deployment_status = deployment_response_json['status']
                 return deployment_status
         except:

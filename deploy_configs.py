@@ -54,7 +54,13 @@ def pprint(json_data):
 
 def main():
     """
-    This script will deploy a config file to a number of devices based on device family
+    This script will deploy a config file to a number of devices based on device family.
+    The device family is defined by a list "DEVICE_TYPES"
+    It will collect all the devices that match the device types, identify those that are reachable, and those that are
+    not reachable.
+    The script will deploy the configuration template to each reachable device.
+    There are some optional commands included that will allow to test the template deployment to a small number of
+    devices first.
     """
 
     # the local date and time when the code will start execution
