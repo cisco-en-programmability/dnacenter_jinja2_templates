@@ -30,6 +30,7 @@ __license__ = "Cisco Sample Code License, Version 1.1"
 import datetime
 import time
 import json
+import csv
 
 import urllib3
 from requests.auth import HTTPBasicAuth  # for Basic Auth
@@ -96,12 +97,22 @@ def main():
 
     print('\nThe unreachable devices to which the template will not be deployed are:', switch_list_unreachable, '\n')
     print('\nThe devices to which the template will be deployed are:', switch_list_reachable)
-    print('\nThe number of devices to deploy the template to is: ', len(switch_list_reachable))
+    total_number_devices = len(switch_list_reachable)
+    print('\nThe number of devices to deploy the template to is: ', total_number_devices)
 
-    first_record = int(input('\nWhat is the device index you want to start with ? (integer between 0 and total number '
-                          'of switches)  '))
+    # we will configure a number of devices equal with "device_count" starting with the device from the list
+    # identified with "first_record"
+
+    first_record = int(input('\nWhat is the device index you want to start with ? (integer between 0 and ' + str(
+        total_number_devices) + ')  '))
+    device_count = int(input('How many devices do you want to configure ?  '))
+
     device_index = first_record
-    for switch in switch_list_reachable[first_record:]:
+
+    # create a list with the structure [[device hostname, deployment status},...]
+    deployment_report = []
+
+    for switch in switch_list_reachable[first_record:first_record+device_count]:
         # deploy the template
 
         # get a Cisco DNA Center auth token, required for mass device configs, script running will take longer than
@@ -118,10 +129,26 @@ def main():
               device_index)
         device_index += 1
 
+        deployment_report.append([switch, deployment_id, deployment_status])
+
         # optional for manual deployment to test
         # value = input('Input y/n to continue ')
         # if value == 'n':
         #    break
+
+    print('\nThe deployment report:\n')
+    pprint(deployment_report)
+
+    # save information to file
+    output_file = open('deployment_report.csv', 'w', newline='')
+    output_writer = csv.writer(output_file)
+
+    # loop through all devices and deployment status to collect the information needed in the report
+    for device in deployment_report:
+        device_info = [device[0], device[1], device[2]]
+        output_writer.writerow(device_info)
+    output_file.close()
+    print('\n\nFile deployment_report.csv" saved')
 
     date_time = str(datetime.datetime.now().replace(microsecond=0))
     print('\n\nEnd of Application "deploy_configs.py" Run: ' + date_time)
