@@ -140,7 +140,8 @@ def main():
         #    break
 
     print('\nThe deployment report:\n')
-    pprint(deployment_report)
+    for item in deployment_report:
+        print(item)
 
     # save information to file
     output_file = open('deployment_report.csv', 'w', newline='')
