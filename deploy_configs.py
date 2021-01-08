@@ -106,6 +106,9 @@ def main():
     first_record = int(input('\nWhat is the device index you want to start with ? (integer between 0 and ' + str(
         total_number_devices) + ')  '))
     device_count = int(input('How many devices do you want to configure ?  '))
+    if device_count + first_record >= total_number_devices:
+        device_count = total_number_devices - first_record
+        print('Changed the number of the devices to maximum allowed: ', device_count)
 
     device_index = first_record
 
