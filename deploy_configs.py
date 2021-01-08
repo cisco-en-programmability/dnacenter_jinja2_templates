@@ -143,8 +143,10 @@ def main():
     for item in deployment_report:
         print(item)
 
+    date_time = str(datetime.datetime.now().replace(microsecond=0))
     # save information to file
-    output_file = open('deployment_report.csv', 'w', newline='')
+    file_name = 'deployment_report-' + str(date_time) + '.csv'
+    output_file = open(file_name, 'w', newline='')
     output_writer = csv.writer(output_file)
 
     # loop through all devices and deployment status to collect the information needed in the report
@@ -152,7 +154,7 @@ def main():
         device_info = [device[0], device[1], device[2]]
         output_writer.writerow(device_info)
     output_file.close()
-    print('\n\nFile deployment_report.csv" saved')
+    print('\n\nFile ' + file_name + ' saved')
 
     date_time = str(datetime.datetime.now().replace(microsecond=0))
     print('\n\nEnd of Application "deploy_configs.py" Run: ' + date_time)
