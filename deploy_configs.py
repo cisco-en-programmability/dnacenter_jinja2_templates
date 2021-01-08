@@ -146,7 +146,6 @@ def main():
     date_time = str(datetime.datetime.now().replace(microsecond=0))
     # save information to file
     file_name = 'deployment_report-' + str(date_time) + '.csv'
-    file_name = file_name.replace(':', '-')
     file_name = file_name.replace(' ', '-')
     output_file = open(file_name, 'w', newline='')
     output_writer = csv.writer(output_file)
