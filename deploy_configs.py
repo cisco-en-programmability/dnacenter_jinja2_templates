@@ -94,10 +94,14 @@ def main():
             else:
                 switch_list_unreachable.append(hostname)
 
-    print('\nThe devices to which the template will be deployed are:', switch_list_reachable)
     print('\nThe unreachable devices to which the template will not be deployed are:', switch_list_unreachable, '\n')
+    print('\nThe devices to which the template will be deployed are:', switch_list_reachable)
+    print('\nThe number of devices to deploy the template to is: ', len(switch_list_reachable))
 
-    for switch in switch_list_reachable:
+    first_record = int(input('\nWhat is the device index you want to start with ? (integer between 0 and total number '
+                          'of switches)  '))
+
+    for switch in switch_list_reachable[first_record:]:
         # deploy the template
 
         # get a Cisco DNA Center auth token, required for mass device configs, script running will take longer than
