@@ -100,7 +100,7 @@ def main():
 
     first_record = int(input('\nWhat is the device index you want to start with ? (integer between 0 and total number '
                           'of switches)  '))
-
+    device_index = first_record
     for switch in switch_list_reachable[first_record:]:
         # deploy the template
 
@@ -113,7 +113,9 @@ def main():
         time.sleep(1)  # wait for the deployment task to be created
     
         deployment_status = dnac_apis.check_template_deployment_status(deployment_id, dnac_auth)
-        print('Deployment task result for switch: ', switch, ' is: ', deployment_status)
+        print('Deployment task result for switch: ', switch, ' is: ', deployment_status, ', device index: ',
+              device_index)
+        device_index += 1
 
         # optional for manual deployment to test
         # value = input('Input y/n to continue ')
