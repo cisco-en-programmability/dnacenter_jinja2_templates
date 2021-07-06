@@ -35,13 +35,9 @@ DNAC_USER = 'username'
 DNAC_PASS = 'password'
 
 
-PROJECT_J2 = 'Cat9k_GS_Prov'
+PROJECT_J2 = 'project_name'
 MANAGEMENT_INT_J2 = 'management_interface.j2'
 NTP_SERVER_J2 = 'ntp_server.j2'
-
-GS_DEPLOY_PROJECT = 'Cat9k_GS_Prov'
-GS_DEPLOY_TEMPLATE = 'gs_prov.j2'
-GS_ENABLE_TEMPLATE = 'gs_enable.j2'
 
 DEVICE_NAME = 'PDX-RN'
 DEVICE_TYPES = ['Cisco Catalyst38xx stack-able ethernet switch', 'Cisco Catalyst 9300 Switch']
